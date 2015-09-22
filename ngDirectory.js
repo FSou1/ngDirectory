@@ -3,34 +3,42 @@
 
     angular
         .module('ngDirectory', [])
-        .directive('ngDirectory', function() {
-            var options = {
-                keyProperty: 'id',
-                displayProperty: 'title'
+        .constant('ngDirectoryConfig', {
+            keyProperty: 'id',
+            displayProperty: 'title',
+            emptyValue: '&mdash;',
+            formatResult: function(arr) {
+                return [].join.call(arr, ', ');
+            }
+        })
+        .directive('ngDirectory', ['ngDirectoryConfig', function(directoryConfig) {
+            var options = {};
+
+            var multipleValue = function (keys, source) {
+                return [].concat.apply([], keys.map(function (key) { return singleValue(key, source); }));
             };
 
-            var multipleValue = function(keys, source) {
-                return keys
-                    .map(function(key) { return singleValue(key, source); });
-            };
-
-            var singleValue = function(key, source) {
+            var singleValue = function (key, source) {
                 return source
                     .filter(function (kv) { return kv[options.keyProperty] === key; })
                     .map(function (kv) { return kv[options.displayProperty] });
             };
 
-            var link = function($scope, elem) {
-                if(typeof $scope.key == 'undefined' || typeof $scope.source == 'undefined') {
-                    throw 'Key and source properties are required with directorySource directive';
+            var link = function ($scope, elem) {
+                if (typeof $scope.key == 'undefined' || typeof $scope.source == 'undefined') {
+                    throw 'Key and source properties are required with ngDirectory directive';
                 }
 
-                options = angular.extend(options, $scope.options);
+                options = angular.extend({}, directoryConfig, $scope.options);
 
                 var action = Array.isArray($scope.key) ? multipleValue : singleValue;
                 var result = action($scope.key, $scope.source);
 
-                elem.html(result.join(', ') || '&mdash;');
+                if(typeof options.format == 'function') {
+                    result = result.map(options.format);
+                }
+
+                elem.html(options.formatResult(result) || options.emptyValue);
             }.bind(this);
 
             return {
@@ -41,6 +49,6 @@
                     options: '='
                 },
                 link: link
-            }
-        })
+            };
+        }]);
 })(angular);

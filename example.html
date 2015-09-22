@@ -17,32 +17,43 @@
 
                         <h3>Model objects</h3>
                         <p>For example we have objects that references to directory, that contains displaying value by id:
-                        <pre>
+<pre>
 $scope.vehicle = {
-    brandId: 1
+    brandId: 1,
+    vendorId: 5
 };
 
 $scope.discount = {
-    brandIds: [2, 4, 5]
+    brandIds: [2, 4, 5],
+    vendorIds: [1, 3]
 };
 </pre>
                         </p>
 
                         <h3>Directories</h3>
-                        <pre>
+<pre>
 $scope.brands = [
     { id: 1, title: 'Audi' },
     { id: 2, title: 'BMW' },
     { id: 3, title: 'Cadillac' },
     { id: 4, title: 'Chery' },
     { id: 5, title: 'Chevrolet' }
-];</pre>
+];
+
+$scope.vendors = [
+    { vendorId: 1, vendorTitle: 'Audi' },
+    { vendorId: 2, vendorTitle: 'BMW' },
+    { vendorId: 3, vendorTitle: 'Cadillac' },
+    { vendorId: 4, vendorTitle: 'Chery' },
+    { vendorId: 5, vendorTitle: 'Chevrolet' }
+];
+</pre>
 
                         <div class="page-header">
                             <h2>Usage</h2>
                         </div>
 
-                        <h4>Display single value</h4>
+                        <h4>Single value</h4>
                         <p>
                             <code>
                                 &lt;pre ng-directory key="vehicle.brandId" source="brands"&gt;&lt;/pre&gt;
@@ -50,8 +61,7 @@ $scope.brands = [
                         </p>
                         <pre ng-directory key="vehicle.brandId" source="brands"></pre>
 
-
-                        <h4>Display multiple value</h4>
+                        <h4>Multiple values</h4>
                         <p>
                             <code>
                                 &lt;pre ng-directory key="discount.brandIds" source="brands"&gt;&lt;/pre&gt;
@@ -59,13 +69,45 @@ $scope.brands = [
                         </p>
                         <pre ng-directory key="discount.brandIds" source="brands"></pre>
 
-                        <h4>Custom display property name</h4>
+                        <h4>Single value with custom key & display properties</h4>
                         <p>
                             <code>
-                                &lt;pre ng-directory key="discount.brandIds" source="brands" options="{ displayProperty: 'manufacturer' }"&gt;&lt;/pre&gt;
+                                &lt;pre ng-directory key="vehicle.vendorId" source="vendors" options="{ keyProperty: 'vendorId', displayProperty: 'vendorTitle' }"&gt;&lt;/pre&gt;
                             </code>
                         </p>
-                        <pre ng-directory key="discount.brandIds" source="brands" options="{ displayProperty: 'manufacturer' }"></pre>
+                        <pre ng-directory key="vehicle.vendorId" source="vendors" options="{ keyProperty: 'vendorId', displayProperty: 'vendorTitle' }"></pre>
+
+                        <h4>Multiple values with custom key & display properties</h4>
+                        <p>
+                            <code>
+                                &lt;pre ng-directory key="discount.vendorIds" source="vendors" options="{ keyProperty: 'vendorId', displayProperty: 'vendorTitle' }"&gt;&lt;/pre&gt;
+                            </code>
+                        </p>
+                        <pre ng-directory key="discount.vendorIds" source="vendors" options="{ keyProperty: 'vendorId', displayProperty: 'vendorTitle' }"></pre>
+
+                        <h4>Applying custom format function for each item</h4>
+                        <p>
+                            <code>
+                                &lt;pre ng-directory key="(vehicle.brandId + 5)" source="brands" options="{ formatItem:  }"&gt;&lt;/pre&gt;
+                            </code>
+                        </p>
+                        <pre ng-directory key="discount.brandIds" source="brands" options="{ format: formatItem }"></pre>
+
+                        <h4>Applying custom format function for result</h4>
+                        <p>
+                            <code>
+                                &lt;pre ng-directory key="discount.brandIds" source="brands" options="{ formatResult: formatResult }"&gt;&lt;/pre&gt;
+                            </code>
+                        </p>
+                        <pre ng-directory key="discount.brandIds" source="brands" options="{ formatResult: formatResult }"></pre>
+
+                        <h4>Custom empty value</h4>
+                        <p>
+                            <code>
+                                &lt;pre ng-directory key="(vehicle.brandId + 5)" source="brands" options="{ emptyValue: 'Brand was not found' }"&gt;&lt;/pre&gt;
+                            </code>
+                        </p>
+                        <pre ng-directory key="(vehicle.brandId + 5)" source="brands" options="{ emptyValue: 'Brand was not found' }"></pre>
                     </div>
                 </div>
             </div>
@@ -83,19 +125,37 @@ $scope.brands = [
                 app.controller('MainCtrl', ['$scope',
                     function($scope) {
                         $scope.brands = [
-                            { id: 1, title: 'Audi' },
-                            { id: 2, title: 'BMW' },
-                            { id: 3, title: 'Cadillac' },
-                            { id: 4, title: 'Chery' },
-                            { id: 5, title: 'Chevrolet' }
+                            { id: 1, title: 'Audi', manufacturer: 'German' },
+                            { id: 2, title: 'BMW', manufacturer: 'German' },
+                            { id: 3, title: 'Cadillac', manufacturer: 'USA' },
+                            { id: 4, title: 'Chery', manufacturer: 'China' },
+                            { id: 5, title: 'Chevrolet', manufacturer: 'USA' }
+                        ];
+
+                        $scope.vendors = [
+                            { vendorId: 1, vendorTitle: 'Audi' },
+                            { vendorId: 2, vendorTitle: 'BMW' },
+                            { vendorId: 3, vendorTitle: 'Cadillac' },
+                            { vendorId: 4, vendorTitle: 'Chery' },
+                            { vendorId: 5, vendorTitle: 'Chevrolet' }
                         ];
 
                         $scope.vehicle = {
-                            brandId: 1
+                            brandId: 1,
+                            vendorId: 5
                         };
 
                         $scope.discount = {
-                            brandIds: [2, 4, 5]
+                            brandIds: [2, 4, 5],
+                            vendorIds: [1, 3]
+                        };
+
+                        $scope.formatItem = function(item) {
+                            return item.toUpperCase() + ' (length: ' + item.length + ')';
+                        };
+
+                        $scope.formatResult = function(arr) {
+                            return arr.join('|').toLowerCase();
                         };
                     }
                 ]);
