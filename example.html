@@ -1,0 +1,105 @@
+<html ng-app="ExampleApp">
+    <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <title>ngDirectory AngularJS directive</title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    </head>
+
+    <body>
+        <div ng-controller="MainCtrl">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="page-header">
+                            <h1>Example data</h1>
+                        </div>
+
+                        <h3>Model objects</h3>
+                        <p>For example we have objects that references to directory, that contains displaying value by id:
+                        <pre>
+$scope.vehicle = {
+    brandId: 1
+};
+
+$scope.discount = {
+    brandIds: [2, 4, 5]
+};
+</pre>
+                        </p>
+
+                        <h3>Directories</h3>
+                        <pre>
+$scope.brands = [
+    { id: 1, title: 'Audi' },
+    { id: 2, title: 'BMW' },
+    { id: 3, title: 'Cadillac' },
+    { id: 4, title: 'Chery' },
+    { id: 5, title: 'Chevrolet' }
+];</pre>
+
+                        <div class="page-header">
+                            <h2>Usage</h2>
+                        </div>
+
+                        <h4>Display single value</h4>
+                        <p>
+                            <code>
+                                &lt;pre ng-directory key="vehicle.brandId" source="brands"&gt;&lt;/pre&gt;
+                            </code>
+                        </p>
+                        <pre ng-directory key="vehicle.brandId" source="brands"></pre>
+
+
+                        <h4>Display multiple value</h4>
+                        <p>
+                            <code>
+                                &lt;pre ng-directory key="discount.brandIds" source="brands"&gt;&lt;/pre&gt;
+                            </code>
+                        </p>
+                        <pre ng-directory key="discount.brandIds" source="brands"></pre>
+
+                        <h4>Custom display property name</h4>
+                        <p>
+                            <code>
+                                &lt;pre ng-directory key="discount.brandIds" source="brands" options="{ displayProperty: 'manufacturer' }"&gt;&lt;/pre&gt;
+                            </code>
+                        </p>
+                        <pre ng-directory key="discount.brandIds" source="brands" options="{ displayProperty: 'manufacturer' }"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+        <script src="ngDirectory.js"></script>
+
+        <script>
+            (function(angular) {
+                "use strict";
+
+                var app = angular.module('ExampleApp', ['ngDirectory']);
+
+                app.controller('MainCtrl', ['$scope',
+                    function($scope) {
+                        $scope.brands = [
+                            { id: 1, title: 'Audi' },
+                            { id: 2, title: 'BMW' },
+                            { id: 3, title: 'Cadillac' },
+                            { id: 4, title: 'Chery' },
+                            { id: 5, title: 'Chevrolet' }
+                        ];
+
+                        $scope.vehicle = {
+                            brandId: 1
+                        };
+
+                        $scope.discount = {
+                            brandIds: [2, 4, 5]
+                        };
+                    }
+                ]);
+            })(angular);
+        </script>
+    </body>
+</html>
