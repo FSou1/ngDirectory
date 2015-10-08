@@ -25,20 +25,26 @@
             };
 
             var link = function ($scope, elem) {
-                if (typeof $scope.key == 'undefined' || typeof $scope.source == 'undefined') {
-                    throw 'Key and source properties are required with ngDirectory directive';
-                }
+                var updateValue = function() {
+                    if (typeof $scope.key == 'undefined' || typeof $scope.source == 'undefined') {
+                        throw 'Key and source properties are required with ngDirectory directive';
+                    }
 
-                options = angular.extend({}, directoryConfig, $scope.options);
+                    options = angular.extend({}, directoryConfig, $scope.options);
 
-                var action = Array.isArray($scope.key) ? multipleValue : singleValue;
-                var result = action($scope.key, $scope.source);
+                    var action = Array.isArray($scope.key) ? multipleValue : singleValue;
+                    var result = action($scope.key, $scope.source);
 
-                if(typeof options.format == 'function') {
-                    result = result.map(options.format);
-                }
+                    if (typeof options.format == 'function') {
+                        result = result.map(options.format);
+                    }
 
-                elem.html(options.formatResult(result) || options.emptyValue);
+                    elem.html(options.formatResult(result) || options.emptyValue);
+                };
+
+                $scope.$watch("key", function(key) {
+                    updateValue();
+                });
             }.bind(this);
 
             return {
